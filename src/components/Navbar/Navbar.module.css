@@ -1,0 +1,30 @@
+.navbar-container {
+  background-color: #313131;
+  color: #fff;
+  padding: 10px;
+  border: 2px solid white;
+  display: flex;
+  flex-wrap: wrap;
+
+  justify-content: space-between;
+  width: 100%;
+}
+.navbar-buttons_container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+.navbar-buttons_container button {
+  background-color: #313131;
+  color: #fff;
+  height: 30%;
+  border: 1px solid white;
+  padding: 15px;
+  margin: 0 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
