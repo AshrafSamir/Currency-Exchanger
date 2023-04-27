@@ -2,7 +2,7 @@ import "./App.css";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { Navbar } from "./components/Navbar";
-import { ConverterPanel } from "./components/ConverterPanel";
+import { Home } from "./pages/Home";
 import "@fortawesome/fontawesome-free/css/all.css";
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
     <Provider store={store}>
       <div className="app-container">
         <Navbar />
-        <ConverterPanel />
+        <Home />
       </div>
     </Provider>
   );

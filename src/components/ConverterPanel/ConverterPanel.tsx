@@ -3,15 +3,15 @@ import Classes from "./ConverterPanel.module.css";
 import { AnyAction } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import Currency from "../../models/currency";
-import { fetchSymbols, fetchConversion1 } from "../../redux/slices/Currency";
+import { fetchConversion1 } from "../../redux/slices/Currency";
 import { ThunkDispatch } from "@reduxjs/toolkit";
-import { parse } from "path";
+// import { parse } from "path";
 // https://app.freecurrencyapi.com/request-playground
 type AppDispatch = ThunkDispatch<any, any, AnyAction>;
 
 const ConverterPanel: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const { loading, error, symbols, conversionResult } = useSelector(
+  const { loading, error, conversionResult } = useSelector(
     (state: { currency: Currency }) => state.currency
   );
 
@@ -54,14 +54,14 @@ const ConverterPanel: React.FC = () => {
     "ZAR",
   ];
 
-  const fetchSymbolsCallback = useCallback(() => {
-    dispatch(fetchSymbols());
-  }, []);
+  // const fetchSymbolsCallback = useCallback(() => {
+  //   dispatch(fetchSymbols());
+  // }, []);
   const fetchConversion1Callback = useCallback(
     (conversionData: { from: string; to: string; amount: number }) => {
       dispatch(fetchConversion1(conversionData));
     },
-    [dispatch, from, to, amount]
+    [dispatch]
   );
 
   useEffect(() => {
@@ -83,7 +83,9 @@ const ConverterPanel: React.FC = () => {
       setAmount(parseInt(e.target.value));
       setDisabled(true);
     } else {
-      setAmount(parseInt(e.target.value));
+      // set fraction to 2 decimal places
+      let amount2decimal = Math.round(parseFloat(e.target.value) * 100) / 100;
+      setAmount(amount2decimal);
       if (e.target.value) setDisabled(false);
     }
   };
@@ -94,23 +96,23 @@ const ConverterPanel: React.FC = () => {
       fetchConversion1Callback(conversionData);
     }
   };
-  const handleOptions = () => {
-    if (loading) {
-      console.log("loading", loading);
-      return <option>Loading...</option>;
-    } else if (error) {
-      console.log("error", error);
-      return <option>Error</option>;
-    } else {
-      Object.keys(symbols).map((key) => {
-        return (
-          <option key={key} value={key}>
-            {key}
-          </option>
-        );
-      });
-    }
-  };
+  // const handleOptions = () => {
+  //   if (loading) {
+  //     console.log("loading", loading);
+  //     return <option>Loading...</option>;
+  //   } else if (error) {
+  //     console.log("error", error);
+  //     return <option>Error</option>;
+  //   } else {
+  //     Object.keys(symbols).map((key) => {
+  //       return (
+  //         <option key={key} value={key}>
+  //           {key}
+  //         </option>
+  //       );
+  //     });
+  //   }
+  // };
 
   return (
     <div className={Classes["panel-container"]}>
@@ -187,7 +189,15 @@ const ConverterPanel: React.FC = () => {
           </div>
           <div className={Classes["details-container"]}>
             <div className={Classes["result-div"]}>
-              <p> XX.XX USD</p>
+              <p>
+                {loading
+                  ? "Loading..."
+                  : error
+                  ? "Error"
+                  : conversionResult
+                  ? conversionResult?.amount + " " + conversionResult?.from
+                  : "XX.XX USD"}
+              </p>
             </div>
             <div className={Classes["details-button"]}>
               <button disabled={disabled}>More Details</button>
