@@ -64,5 +64,6 @@ export const fetchSymbols = createAsyncThunk("symbols/fetch", async () => {
   return response.data;
 });
 
+
 // export const {} = currencySlice.actions;
 export default currencySlice.reducer;

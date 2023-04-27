@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import Classes from "./ConverterPanel.module.css";
 import { AnyAction } from "redux";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,20 +9,50 @@ import { ThunkDispatch } from "@reduxjs/toolkit";
 type AppDispatch = ThunkDispatch<any, any, AnyAction>;
 
 const ConverterPanel: React.FC = () => {
+  const fetchSymbolsCallback = useCallback(() => {
+    dispatch(fetchSymbols());
+  }, []);
+
   const dispatch: AppDispatch = useDispatch();
   const { loading, error, symbols } = useSelector(
     (state: { currency: Currency }) => state.currency
   );
 
+  const [disabled, setDisabled] = React.useState(false);
+  const [from, setFrom] = React.useState("EUR");
+  const [to, setTo] = React.useState("USD");
+  const [amount, setAmount] = React.useState(1);
+
   useEffect(() => {
-    dispatch(fetchSymbols());
+    fetchSymbolsCallback();
+    console.log({ symbols });
   }, [dispatch]);
 
-  const handleSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const checkValidationOnAmount = () => {
+    if (amount <= 0) {
+      setDisabled(true);
+    } else {
+      setDisabled(false);
+    }
+  };
+
+  const handleFromSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
     console.log(e.target.value);
+    checkValidationOnAmount();
+    setFrom(e.target.value);
+  };
+  const handleToSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log(e.target.value);
+    checkValidationOnAmount();
+    setTo(e.target.value);
   };
   const handleSwitch = () => {
     console.log("switch");
+  };
+  const handleAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.value);
+
+    setAmount(parseInt(e.target.value));
   };
   const handleOptions = () => {
     if (loading) {
@@ -31,11 +61,9 @@ const ConverterPanel: React.FC = () => {
     } else if (error) {
       console.log("error", error);
       return <option>Error</option>;
-    } else if (symbols) {
-      console.log("success", symbols);
+    } else {
       // loop on the object keys
       Object.keys(symbols).map((key) => {
-        console.log(key);
         return (
           <option key={key} value={key}>
             {key}
@@ -52,7 +80,12 @@ const ConverterPanel: React.FC = () => {
         <div className={Classes["panel-body_left-container"]}>
           <div>
             <label>Amount</label>
-            <input type="number" name="amount" defaultValue={1} />
+            <input
+              type="number"
+              name="amount"
+              value={amount}
+              onChange={handleAmount}
+            />
           </div>
           <div>
             <p>1 EUR = XX.XX USD</p>
@@ -62,7 +95,14 @@ const ConverterPanel: React.FC = () => {
           <div className={Classes["right-container_selection-form"]}>
             <div className={Classes["from-selection"]}>
               <label>From</label>
-              <select name="from">{handleOptions()}</select>
+              <select
+                name="from"
+                value={from}
+                onChange={handleFromSelection}
+                disabled={disabled}
+              >
+                {handleOptions()}
+              </select>
             </div>
             <div className={Classes["switch-button"]}>
               <button>
@@ -71,21 +111,26 @@ const ConverterPanel: React.FC = () => {
             </div>
             <div className={Classes["to-selection"]}>
               <label>To</label>
-              <select name="to">
+              <select
+                value={to}
+                onChange={handleToSelection}
+                disabled={disabled}
+                name="to"
+              >
                 <option value="EUR">EUR</option>
                 <option value="USD">USD</option>
               </select>
             </div>
           </div>
           <div className={Classes["right-container_submit-button"]}>
-            <button>Convert</button>
+            <button disabled={disabled}>Convert</button>
           </div>
           <div className={Classes["details-container"]}>
             <div className={Classes["result-div"]}>
               <p> XX.XX USD</p>
             </div>
             <div className={Classes["details-button"]}>
-              <button>More Details</button>
+              <button disabled={disabled}>More Details</button>
             </div>
           </div>
         </div>
