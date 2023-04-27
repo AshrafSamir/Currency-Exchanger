@@ -5,7 +5,7 @@ import currencyReducer from "./slices/Currency";
 
 const store = configureStore({
   reducer: {
-    counter: currencyReducer,
+    currency: currencyReducer,
   },
 });
 
