@@ -3,18 +3,15 @@ import Classes from "./ConverterPanel.module.css";
 import { AnyAction } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import Currency from "../../models/currency";
-import { fetchSymbols } from "../../redux/slices/Currency";
+import { fetchSymbols, fetchConversion1 } from "../../redux/slices/Currency";
 import { ThunkDispatch } from "@reduxjs/toolkit";
-
+import { parse } from "path";
+// https://app.freecurrencyapi.com/request-playground
 type AppDispatch = ThunkDispatch<any, any, AnyAction>;
 
 const ConverterPanel: React.FC = () => {
-  const fetchSymbolsCallback = useCallback(() => {
-    dispatch(fetchSymbols());
-  }, []);
-
   const dispatch: AppDispatch = useDispatch();
-  const { loading, error, symbols } = useSelector(
+  const { loading, error, symbols, conversionResult } = useSelector(
     (state: { currency: Currency }) => state.currency
   );
 
@@ -22,37 +19,80 @@ const ConverterPanel: React.FC = () => {
   const [from, setFrom] = React.useState("EUR");
   const [to, setTo] = React.useState("USD");
   const [amount, setAmount] = React.useState(1);
+  const currencies = [
+    "AUD",
+    "BGN",
+    "BRL",
+    "CAD",
+    "CHF",
+    "CNY",
+    "CZK",
+    "DKK",
+    "EUR",
+    "GBP",
+    "HKD",
+    "HRK",
+    "HUF",
+    "ILS",
+    "INR",
+    "ISK",
+    "JPY",
+    "KRW",
+    "MXN",
+    "MYR",
+    "NOK",
+    "NZD",
+    "PHP",
+    "PLN",
+    "RON",
+    "RUB",
+    "SEK",
+    "SGD",
+    "THB",
+    "TRY",
+    "USD",
+    "ZAR",
+  ];
+
+  const fetchSymbolsCallback = useCallback(() => {
+    dispatch(fetchSymbols());
+  }, []);
+  const fetchConversion1Callback = useCallback(
+    (conversionData: { from: string; to: string; amount: number }) => {
+      dispatch(fetchConversion1(conversionData));
+    },
+    [dispatch, from, to, amount]
+  );
 
   useEffect(() => {
-    fetchSymbolsCallback();
-    console.log({ symbols });
-  }, [dispatch]);
+    // fetchSymbolsCallback();
+  }, [disabled]);
 
-  const checkValidationOnAmount = () => {
-    if (amount <= 0) {
+  const handleFromSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (!disabled) setFrom(e.target.value);
+  };
+  const handleToSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (!disabled) setTo(e.target.value);
+  };
+  const handleSwitch = () => {
+    setFrom(to);
+    setTo(from);
+  };
+  const handleAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (parseInt(e.target.value) <= 0 || !e.target.value) {
+      setAmount(parseInt(e.target.value));
       setDisabled(true);
     } else {
-      setDisabled(false);
+      setAmount(parseInt(e.target.value));
+      if (e.target.value) setDisabled(false);
     }
   };
 
-  const handleFromSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(e.target.value);
-    checkValidationOnAmount();
-    setFrom(e.target.value);
-  };
-  const handleToSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(e.target.value);
-    checkValidationOnAmount();
-    setTo(e.target.value);
-  };
-  const handleSwitch = () => {
-    console.log("switch");
-  };
-  const handleAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
-
-    setAmount(parseInt(e.target.value));
+  const handleConvert = () => {
+    if (!disabled) {
+      const conversionData = { from, to, amount };
+      fetchConversion1Callback(conversionData);
+    }
   };
   const handleOptions = () => {
     if (loading) {
@@ -62,7 +102,6 @@ const ConverterPanel: React.FC = () => {
       console.log("error", error);
       return <option>Error</option>;
     } else {
-      // loop on the object keys
       Object.keys(symbols).map((key) => {
         return (
           <option key={key} value={key}>
@@ -88,7 +127,15 @@ const ConverterPanel: React.FC = () => {
             />
           </div>
           <div>
-            <p>1 EUR = XX.XX USD</p>
+            <p>
+              {loading
+                ? "Loading..."
+                : error
+                ? "Error"
+                : conversionResult
+                ? `${conversionResult.amount} ${conversionResult.from} = ${conversionResult.result} ${conversionResult.to}`
+                : "1 EUR = XX.XX USD"}
+            </p>
           </div>
         </div>
         <div className={Classes["panel-body_right-container"]}>
@@ -101,11 +148,17 @@ const ConverterPanel: React.FC = () => {
                 onChange={handleFromSelection}
                 disabled={disabled}
               >
-                {handleOptions()}
+                {currencies.map((key) => {
+                  return (
+                    <option key={key} value={key}>
+                      {key}
+                    </option>
+                  );
+                })}
               </select>
             </div>
             <div className={Classes["switch-button"]}>
-              <button>
+              <button onClick={handleSwitch} disabled={disabled}>
                 <i className="fa-solid fa-arrows-left-right"></i>
               </button>
             </div>
@@ -117,13 +170,20 @@ const ConverterPanel: React.FC = () => {
                 disabled={disabled}
                 name="to"
               >
-                <option value="EUR">EUR</option>
-                <option value="USD">USD</option>
+                {currencies.map((key) => {
+                  return (
+                    <option key={key} value={key}>
+                      {key}
+                    </option>
+                  );
+                })}
               </select>
             </div>
           </div>
           <div className={Classes["right-container_submit-button"]}>
-            <button disabled={disabled}>Convert</button>
+            <button onClick={handleConvert} disabled={disabled}>
+              Convert
+            </button>
           </div>
           <div className={Classes["details-container"]}>
             <div className={Classes["result-div"]}>

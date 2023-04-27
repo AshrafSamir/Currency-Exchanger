@@ -54,6 +54,41 @@ const currencySlice = createSlice({
       state.error = action.error.message;
       state.loading = false;
     });
+    builder.addCase(fetchConversion.pending, (state, action) => {
+      state.error = undefined;
+      state.loading = true;
+    });
+    builder.addCase(fetchConversion.fulfilled, (state, action) => {
+      state.loading = false;
+      console.log(action.payload);
+      // state.conversionResult = action.payload;
+    });
+    builder.addCase(fetchConversion.rejected, (state, action) => {
+      state.error = action.error.message;
+      state.loading = false;
+    });
+    builder.addCase(fetchConversion1.pending, (state, action) => {
+      state.error = undefined;
+      state.loading = true;
+    });
+    builder.addCase(fetchConversion1.fulfilled, (state, action) => {
+      state.loading = false;
+      console.log(action.payload);
+      let rate = action.payload.result.data[action.payload.to];
+      let result = rate * action.payload.amount;
+      // limit float to 2 decimal places
+      result = Math.round(result * 100) / 100;
+      state.conversionResult = {
+        from: action.payload.from,
+        to: action.payload.to,
+        amount: action.payload.amount,
+        result,
+      };
+    });
+    builder.addCase(fetchConversion1.rejected, (state, action) => {
+      state.error = action.error.message;
+      state.loading = false;
+    });
   },
 });
 export const fetchSymbols = createAsyncThunk("symbols/fetch", async () => {
@@ -64,6 +99,30 @@ export const fetchSymbols = createAsyncThunk("symbols/fetch", async () => {
   return response.data;
 });
 
+export const fetchConversion = createAsyncThunk(
+  "conversion/fetch",
+  async (params: { from: string; to: string; amount: number }) => {
+    const response = await axios.get(
+      `https://api.apilayer.com/fixer/convert?from=${params.from}&to=${params.to}&amount=${params.amount}`,
+      requestOptions
+    );
+    return response.data;
+  }
+);
+export const fetchConversion1 = createAsyncThunk(
+  "rate/fetch",
+  async (params: { from: string; to: string; amount: number }) => {
+    const response = await axios.get(
+      `https://api.freecurrencyapi.com/v1/latest?apikey=OI4BVh2gSNvOYdVSGHDqDqjB6p37LN4OkZB6y1kr&currencies=${params.to}&base_currency=${params.from}`
+    );
+    return {
+      from: params.from,
+      to: params.to,
+      amount: params.amount,
+      result: response.data,
+    };
+  }
+);
 
 // export const {} = currencySlice.actions;
 export default currencySlice.reducer;
