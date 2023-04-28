@@ -30,9 +30,7 @@ const ConverterPanel: React.FC<{
   const [to, setTo] = React.useState("USD");
   const [amount, setAmount] = React.useState(1);
 
-  // const fetchSymbolsCallback = useCallback(() => {
-  //   dispatch(fetchSymbols());
-  // }, []);
+
   const fetchConversion1Callback = useCallback(
     (conversionData: { from: string; to: string; amount: number }) => {
       dispatch(fetchConversion1(conversionData));
@@ -41,11 +39,16 @@ const ConverterPanel: React.FC<{
   );
 
   useEffect(() => {
-    // fetchSymbolsCallback();
     if (type === "details") {
-      setFrom(routingData.from);
-      setTo(routingData.to);
-      setAmount(routingData.amount);
+      if (routingData) {
+        setFrom(routingData.from);
+        setTo(routingData.to);
+        setAmount(routingData.amount);
+      } else {
+        setFrom("EUR");
+        setTo("USD");
+        setAmount(1);
+      }
     }
   }, [routingData, type]);
 
@@ -64,7 +67,6 @@ const ConverterPanel: React.FC<{
       setAmount(parseInt(e.target.value));
       setDisabled(true);
     } else {
-      // set fraction to 2 decimal places
       let amount2decimal = Math.round(parseFloat(e.target.value) * 100) / 100;
       setAmount(amount2decimal);
       if (e.target.value) setDisabled(false);
@@ -81,23 +83,6 @@ const ConverterPanel: React.FC<{
       navigate("/details", { state: { from, to, amount } });
     }
   };
-  // const handleOptions = () => {
-  //   if (loading) {
-  //     console.log("loading", loading);
-  //     return <option>Loading...</option>;
-  //   } else if (error) {
-  //     console.log("error", error);
-  //     return <option>Error</option>;
-  //   } else {
-  //     Object.keys(symbols).map((key) => {
-  //       return (
-  //         <option key={key} value={key}>
-  //           {key}
-  //         </option>
-  //       );
-  //     });
-  //   }
-  // };
 
   return (
     <div className={Classes["panel-container"]}>

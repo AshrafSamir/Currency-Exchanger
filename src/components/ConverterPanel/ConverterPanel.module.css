@@ -34,7 +34,6 @@
   text-align: center;
 }
 
-
 .panel-body {
   background-color: #313131;
   color: #fff;
@@ -47,7 +46,6 @@
 .panel-body_left-container {
   display: flex;
   flex-direction: column;
-  /* space between */
   justify-content: space-between;
 
   width: 40%;
@@ -165,37 +163,24 @@
 
 @media (max-width: 870px) {
   .right-container_selection-form {
-    display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     gap: 1rem;
-    width: 100%;
   }
   .panel-body {
-    background-color: #313131;
-    color: #fff;
-    padding: 1.5rem;
-    border: 2px solid white;
-    display: flex;
-    flex-wrap: wrap;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100%;
   }
   .panel-body_left-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     width: 100%;
   }
   .panel-body_right-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0 1.5rem;
+    width: 100%;
+  }
+  .from-selection {
+    width: 100%;
+  }
+  .to-selection {
     width: 100%;
   }
 }

@@ -11,7 +11,7 @@ type AppDispatch = ThunkDispatch<any, any, AnyAction>;
 
 const CurrencyCardContainer: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const { conversionResult, conversionResults, loading, error } = useSelector(
+  const { conversionResult, conversionResults } = useSelector(
     (state: { currency: Currency }) => {
       return state.currency;
     }
@@ -34,11 +34,7 @@ const CurrencyCardContainer: React.FC = () => {
 
   return (
     <div className={Classes["container"]}>
-      {loading ? (
-        "Loading..."
-      ) : error ? (
-        "Error"
-      ) : conversionResults ? (
+      {conversionResults ? (
         conversionResults.map(
           (conversionResult: {
             from: string;
@@ -50,7 +46,17 @@ const CurrencyCardContainer: React.FC = () => {
           }
         )
       ) : (
-        <h1>Waiting your inputs...</h1>
+        <>
+          <CurrencyCard />
+          <CurrencyCard />
+          <CurrencyCard />
+          <CurrencyCard />
+          <CurrencyCard />
+          <CurrencyCard />
+          <CurrencyCard />
+          <CurrencyCard />
+          <CurrencyCard />
+        </>
       )}
     </div>
   );
