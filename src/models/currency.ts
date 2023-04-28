@@ -7,6 +7,12 @@ interface Currency {
     amount: number;
     result: number;
   };
+  conversionResults?: {
+    from: string;
+    to: string;
+    amount: number;
+    result: number;
+  }[];
   symbols: {
     [key: string]: string;
   };
