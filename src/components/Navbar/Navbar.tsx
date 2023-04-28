@@ -1,5 +1,6 @@
 import React from "react";
 import Classes from "./Navbar.module.css";
+import { Link } from "react-router-dom";
 
 const Navbar: React.FC = () => {
   return (
@@ -8,8 +9,12 @@ const Navbar: React.FC = () => {
         <h1 className={Classes.test}>Exchanger</h1>
       </div>
       <div className={Classes["navbar-buttons_container"]}>
-        <button>EUR-USD Details</button>
-        <button>EUR-GBP Details</button>
+        <Link to="/details" state={{ from: "EUR", to: "USD", amount: 1 }}>
+          <button>EUR-USD Details</button>
+        </Link>
+        <Link to="/details" state={{ from: "EUR", to: "GBP", amount: 1 }}>
+          <button>EUR-GBP Details</button>
+        </Link>
       </div>
     </div>
   );

@@ -6,10 +6,35 @@
   margin: 1.5rem;
   width: 100%;
 }
+.panel-container_details {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
 .panel-header {
   color: white;
   margin-right: auto;
 }
+.panel-subheader {
+  font-size: 1rem;
+  color: rgb(221, 214, 214);
+}
+.panel-home_button {
+  min-width: 10%;
+  outline: none;
+  border: none;
+  background-color: #0057d8;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px;
+  text-decoration: none;
+  text-align: center;
+}
+
+
 .panel-body {
   background-color: #313131;
   color: #fff;
