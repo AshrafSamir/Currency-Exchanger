@@ -39,10 +39,15 @@ const CurrencyCardContainer: React.FC = () => {
           (conversionResult: {
             from: string;
             to: string;
-            amount: number;
+            amount: number | string;
             result: number;
           }) => {
-            return <CurrencyCard conversionResult={conversionResult} />;
+            return (
+              <CurrencyCard
+                key={conversionResult.from + conversionResult.to}
+                conversionResult={conversionResult}
+              />
+            );
           }
         )
       ) : (

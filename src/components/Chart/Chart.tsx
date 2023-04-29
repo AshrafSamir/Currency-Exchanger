@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect } from "react";
+import "./Chart.module.css";
 import { AnyAction } from "redux";
 import { useDispatch, useSelector } from "react-redux";
 import historicalRate from "../../models/historicalRate";
@@ -17,7 +18,6 @@ import {
 } from "recharts";
 
 type AppDispatch = ThunkDispatch<any, any, AnyAction>;
-
 
 const Chart: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -49,12 +49,18 @@ const Chart: React.FC = () => {
 
   return (
     <>
+      <h1>Last month currency rates</h1>
       {loading ? (
         <div>Loading...</div>
       ) : error ? (
         <div>{error}</div>
       ) : (
-        <ResponsiveContainer width="100%" height="39%">
+        <ResponsiveContainer
+          width="100%"
+          height="39%"
+          minWidth="0"
+          minHeight="undefined"
+        >
           <LineChart
             width={500}
             height={300}

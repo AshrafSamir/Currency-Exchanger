@@ -4,13 +4,13 @@ interface Currency {
   conversionResult?: {
     from: string;
     to: string;
-    amount: number;
+    amount: number | string;
     result: number;
   };
   conversionResults?: {
     from: string;
     to: string;
-    amount: number;
+    amount: number | string;
     result: number;
   }[];
   symbols: {

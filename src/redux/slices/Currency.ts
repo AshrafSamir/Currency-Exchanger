@@ -54,7 +54,7 @@ const currencySlice = createSlice({
     builder.addCase(fetchConversion1.fulfilled, (state, action) => {
       state.loading = false;
       let rate = action.payload.rate;
-      let result = rate * action.payload.amount;
+      let result = rate * +action.payload.amount;
       // limit float to 2 decimal places
       result = Math.round(result * 100) / 100;
       state.conversionResult = {
@@ -76,7 +76,7 @@ const currencySlice = createSlice({
       state.loading = false;
       state.conversionResults = action.payload.map((res) => {
         let rate = res.rate;
-        let result = rate * res.amount;
+        let result = rate * +res.amount;
         // limit float to 2 decimal places
         result = Math.round(result * 100) / 100;
         return {
@@ -96,7 +96,7 @@ const currencySlice = createSlice({
 
 export const fetchConversion1 = createAsyncThunk(
   "rate/fetch",
-  async (params: { from: string; to: string; amount: number }) => {
+  async (params: { from: string; to: string; amount: number|string }) => {
     const response = await axios.get(
       `https://api.freecurrencyapi.com/v1/latest?apikey=OI4BVh2gSNvOYdVSGHDqDqjB6p37LN4OkZB6y1kr&currencies=${params.to}&base_currency=${params.from}`
     );
@@ -111,7 +111,7 @@ export const fetchConversion1 = createAsyncThunk(
 
 export const fetchMostCommonRates = createAsyncThunk(
   "rate/fetchMostCommonRates",
-  async (params: { from: string; to: string; amount: number }) => {
+  async (params: { from: string; to: string; amount: number | string }) => {
     const response = await axios.get(
       `https://api.freecurrencyapi.com/v1/latest?apikey=OI4BVh2gSNvOYdVSGHDqDqjB6p37LN4OkZB6y1kr&currencies=EUR%2CUSD%2CCAD%2CBGN%2CBRL%2CCHF%2CCNY%2CCZK%2CGBP`
     );

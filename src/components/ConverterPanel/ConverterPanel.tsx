@@ -7,8 +7,6 @@ import { fetchConversion1 } from "../../redux/slices/Currency";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-// https://app.freecurrencyapi.com/request-playground
-
 type AppDispatch = ThunkDispatch<any, any, AnyAction>;
 
 const ConverterPanel: React.FC<{
@@ -28,11 +26,10 @@ const ConverterPanel: React.FC<{
   const [disabled, setDisabled] = React.useState(false);
   const [from, setFrom] = React.useState("EUR");
   const [to, setTo] = React.useState("USD");
-  const [amount, setAmount] = React.useState(1);
-
+  const [amount, setAmount] = React.useState<number | string>(1);
 
   const fetchConversion1Callback = useCallback(
-    (conversionData: { from: string; to: string; amount: number }) => {
+    (conversionData: { from: string; to: string; amount: number |string }) => {
       dispatch(fetchConversion1(conversionData));
     },
     [dispatch]
@@ -63,8 +60,8 @@ const ConverterPanel: React.FC<{
     setTo(from);
   };
   const handleAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (parseInt(e.target.value) <= 0 || !e.target.value) {
-      setAmount(parseInt(e.target.value));
+    if (+e.target.value <= 0 || !e.target.value) {
+      setAmount("");
       setDisabled(true);
     } else {
       let amount2decimal = Math.round(parseFloat(e.target.value) * 100) / 100;
@@ -139,7 +136,7 @@ const ConverterPanel: React.FC<{
                 id="from"
                 value={from}
                 onChange={handleFromSelection}
-                disabled={type === "details" ? true : false}
+                disabled={type === "details" ? true : disabled}
               >
                 {Object.keys(symbols).map((key) => {
                   return (
@@ -153,7 +150,7 @@ const ConverterPanel: React.FC<{
             <div className={Classes["switch-button"]}>
               <button
                 onClick={handleSwitch}
-                disabled={type === "details" ? true : false}
+                disabled={type === "details" ? true : disabled}
               >
                 <i className="fa-solid fa-arrows-left-right"></i>
               </button>
@@ -202,7 +199,7 @@ const ConverterPanel: React.FC<{
             <div className={Classes["details-button"]}>
               <Link to="/details" state={{ from, to, amount }}>
                 <button
-                  disabled={type === "details" ? true : false}
+                  disabled={type === "details" ? true : disabled}
                   style={type === "details" ? { display: "none" } : {}}
                 >
                   More Details

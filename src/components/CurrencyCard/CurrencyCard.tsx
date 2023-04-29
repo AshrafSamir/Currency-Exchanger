@@ -5,7 +5,7 @@ const CurrencyCard: React.FC<{
   conversionResult?: {
     from: string;
     to: string;
-    amount: number;
+    amount: number | string;
     result: number;
   };
 }> = ({ conversionResult }) => {
